@@ -1,6 +1,7 @@
 library(ggplot2)
 library(tidyverse)
 options(stringsAsFactors = FALSE)
+theme_set(theme_bw())
 
 
 setwd("C:/Users/Antoine Laurent/Google Drive/Stanford/Classes/MSE 231/HW1")
@@ -82,10 +83,13 @@ data_OKgen2 = data_OKgen[complete.cases(data_OKgen[ , 8]),]
 
 
 ### Compute volume of tweets in each 15-minute interval in our data (by gender)
-Male_Tweets <-  filter(data_OKgen, TweetGender == "M") %>%
-  group_by(Time) %>%
-  summarize(n = n()) %>%
-  select(Time, n)
+Volume_Tweets <-  group_by(data_OKgen, Time, TweetGender) %>%
+  summarize(numTweets = n()) %>%
+  arrange(Time)
+
+ggplot(data = Volume_Tweets) + 
+  geom_line(mapping = aes(x=Time, y=numTweets, group=TweetGender, color=TweetGender))
+
 
 
 
