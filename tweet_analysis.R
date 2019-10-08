@@ -20,30 +20,13 @@ female_names=filter(names_file,Gender=="F")
 Lucas_df=read.csv(file="data.csv",sep=",")
 colnames(Lucas_df)=c("Date","Time","TweetID","OriginalID")
 
-small_data=Lucas_df[1:50000,]
+#TODO - Small data must be random!
+small_data=Lucas_df[sample(nrow(Lucas_df),50000),]
 df_first_names <- mutate(small_data, Tweet_first_name = tolower(word(TweetID,1)), Original_first_name=tolower(word(OriginalID,1)))
-# TRY TO ADD A COLUMN AND APPLY THE FUNCTION LINE BY LINE ON THE FIRST NAME
-df_first_names$Tweet_gender=df_first_names$Tweet_first_name #just to get same length and format
 
 
-i=1
-while (i<length(df_first_names$Tweet_gender)){
-  df_first_names$Tweet_gender[i] <- name2gen(df_first_names$Tweet_first_name[i])
-  df_first_names$Original_gender[i] <- name2gen(df_first_names$Original_first_name[i])
-  i=i+1
-}
-
-
-df2=mutate(df_first_names,TweetGender=name2gen2(df_first_names$Tweet_first_name),
-           OriginalGender=name2gen2(df_first_names$Original_first_name))
-
-
-
-### determine gender from name as string
-name1="Peter"
-
-
-#### from name to gender
+# Infer the gender from the name
+# We will use the following function: TODO - change function name
 #as a function:
 name2gen2 <- function(firstname) {
   lapply(firstname, function(firstname){
@@ -70,6 +53,49 @@ name2gen2 <- function(firstname) {
   })
   
 }
+
+# We now create two columns with the genders of the tweet and the original
+df2=mutate(df_first_names,TweetGender=name2gen2(df_first_names$Tweet_first_name),
+           OriginalGender=name2gen2(df_first_names$Original_first_name))
+
+# Convert the returned gender (list) into a factor
+df2$TweetGender <- as.factor(unlist(df2$TweetGender))
+df2$OriginalGender <- as.factor(unlist(df2$OriginalGender))
+
+
+
+
+
+###########################################################
+#       Data analysis
+##########################################################
+
+data <- df2
+
+N=length(data[,1])
+Nfemale=sum(data$TweetGender=="F", na.rm=T)
+Nmale=sum(data$TweetGender=="M", na.rm=T)
+
+### Filter out the NAs in gender columns
+data_OKgen = data[complete.cases(data[ , 7]),]
+data_OKgen2 = data_OKgen[complete.cases(data_OKgen[ , 8]),]
+
+
+### Compute volume of tweets in each 15-minute interval in our data (by gender)
+Male_Tweets <-  filter(data_OKgen, TweetGender == "M") %>%
+  group_by(Time) %>%
+  summarize(n = n()) %>%
+  select(Time, n)
+
+
+
+#############
+#  Annex
+#############
+
+# Alternative syntax (but same method) to obtain the genders
+df_first_names$Tweet_gender = df_first_names$Tweet_first_name #just to get same length and format
+
 
 
 ##### from name to gender
@@ -98,6 +124,20 @@ name2gen <- function(firstname) {
   return(thisguy)
 }
 
+
+i=1
+while (i<length(df_first_names$Tweet_gender)){
+  df_first_names$Tweet_gender[i] <- name2gen(df_first_names$Tweet_first_name[i])
+  df_first_names$Original_gender[i] <- name2gen(df_first_names$Original_first_name[i])
+  i=i+1
+}
+
+
+# ORIGINAL LOGIC TO INFER GENDER
+
+### determine gender from name as string
+name1="Peter"
+
 # return M or F if at least 95% sure, or NA otherwise
 thisguy=""
 name1=tolower(name1)
@@ -121,17 +161,7 @@ if ((name1 %in% male_names$Name) & !(name1 %in% female_names$Name )){
 }
 
 
-#Add first_names <- mutate(data_from_Lucas, first_name = tolower(word(username,1)))
-
-
-female_names[which(female_names$Name==name1),3]
-
-
-###########################################################
-#       Data analysis
-##########################################################
-
-data=df_first_names
+data=df_first_name
 
 N=length(data[,1])
 Nfemale=sum(data$Tweet_gender=="F", na.rm=T)
