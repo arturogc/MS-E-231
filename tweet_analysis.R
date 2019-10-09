@@ -4,18 +4,18 @@ options(stringsAsFactors = FALSE)
 theme_set(theme_bw())
 
 
-setwd("C:/Users/Antoine Laurent/Google Drive/Stanford/Classes/MSE 231/HW1")
+setwd("C:/Users/Antoine Laurent/Google Drive/Stanford/Classes/MSE 231/HW1/MS-E-231")
+
 
 #load names yob file
-names_file=read.delim("yob1990.txt",header=FALSE, sep=",")
-colnames(names_file)=c("Name","Gender","Occ")
-names_file$Name=tolower(names_file$Name)
+female_names=read.table('female_names.tsv', header = T)
+male_names=read.table('male_names.tsv', header=T)
 
+colnames(male_names)=c("Name","Count","Year")
+male_names$Name=tolower(male_names$Name)
 
-#split in 2 data frames
-male_names=filter(names_file,Gender=="M")
-female_names=filter(names_file,Gender=="F")
-
+colnames(female_names)=c("Name","Count","Year")
+female_names$Name=tolower(female_names$Name)
 
 ### Organize raw data
 Lucas_df=read.csv(file="data.csv",sep=",")
@@ -37,8 +37,8 @@ name2gen2 <- function(firstname) {
     } else if (!(name1 %in% male_names$Name) & (name1 %in% female_names$Name )){
       return("F")
     } else if ((name1 %in% male_names$Name) & (name1 %in% female_names$Name )){
-      Focc=female_names[which(female_names$Name==name1),3]
-      Mocc=male_names[which(male_names$Name==name1),3]
+      Focc=sum(female_names[which(female_names$Name==name1),2])
+      Mocc=sum(male_names[which(male_names$Name==name1),2])
       Mproba=Mocc/(Mocc+Focc)
       if (Mproba>0.95){
         return("M")
