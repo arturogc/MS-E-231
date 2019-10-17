@@ -14,10 +14,18 @@ For each line of data, it emits the following (key,value) pais:
 for line in sys.stdin:
 	# We input the first line
 	params = line.strip().split(,)
+
 	
+	# The line may be from either table (fares.csv or trip.csv), so we have to identify it:
 	if len(params) == 14: # trip data
-        key = ",".join([line_data[0],line_data[1],line_data[5]])
-    elif len(line_data) == 11: # fare data
-        key = ",".join([line_data[0],line_data[1],line_data[3]])
+        key = ",".join([params[0],params[1],params[5]])
+    elif len(params) == 11: # fare data
+        key = ",".join([params[0],params[1],params[3]])
     else:
-            key = "NA" # this get checked and thrown out in the
+        key = "NA" # this get checked and thrown out in the
+
+    # If it is the header, we get rid of it (not needed for the reduce step)
+    if key[0].isdigit():
+        print(key + "\t" + line.strip())
+    else:
+        pass
