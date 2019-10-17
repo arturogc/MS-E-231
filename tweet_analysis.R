@@ -1,6 +1,5 @@
 library(ggplot2)
 library(tidyverse)
-install.packages("lubridate")
 library(lubridate)
 
 
