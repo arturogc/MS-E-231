@@ -1,4 +1,3 @@
-#!/usr/bin/env python2.7
 
 # Step 3
 # Reduce step
