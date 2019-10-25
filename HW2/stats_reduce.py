@@ -25,9 +25,16 @@ def read_map():
         yield line.rstrip().split('\t')
 
 
-def compute_onduty(times):
+def compute_onduty(times, min_minutes=30):
+    t_onduty = 0
+    prev_end = float('inf')
     times.sort(key=lambda x : datetime.strptime(x[0], dtime_fmt))
-    pass
+    for time in times:
+        t_onduty += (time[1] - time[0]).total_seconds()
+        if (time[0] - prev_end).total_seconds() <= min_minutes * 60:
+            t_onduty += (time[0] - prev_end).total_seconds()
+        prev_end = time[1]
+    return t_onduty / 3600
 
 
 def compute_occupied(times):
