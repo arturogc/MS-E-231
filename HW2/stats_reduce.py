@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+#!/usr/bin/env python3
 """
 Created on Tue Oct 22 18:10:02 2019
 
@@ -41,7 +41,7 @@ def compute_occupied(times):
     return t_occupied
 
 
-if __name__ == 'main':
+def main():
     lines = read_map()
     
     for key, group in groupby(lines, key=lambda x : x[0]):
@@ -64,3 +64,6 @@ if __name__ == 'main':
         key = key.strip().split(',')
         print('\t'.join([key[0], key[1], key[2], \
                          str(t_onduty), str(t_occupied), str(n_pass), str(n_trip), str(n_mile), str(earnings)]))
+
+if __name__ == "__main__":
+    main()

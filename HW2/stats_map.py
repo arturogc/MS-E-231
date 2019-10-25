@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+#!/usr/bin/env python3
 """
 Created on Wed Oct 16 17:32:45 2019
 
@@ -19,7 +19,7 @@ index = {'hack' : 1,
          'earnings' : 20}
 
 
-if __name__ == 'main':
+def main():
     
     for line in sys.stdin:
         line = line.strip().split('\t')
@@ -33,7 +33,7 @@ if __name__ == 'main':
         
         if start.hour == end.hour:
             key = ",".join([str(start.hour), datetime.strftime(start, date_fmt), driver])
-            val = ",".join([datetime.strftime(start, dtime_fmt), datetime.strftime(end, dtime_fmt), n_pass, 1, n_mile, earnings])
+            val = ",".join([datetime.strftime(start, dtime_fmt), datetime.strftime(end, dtime_fmt), str(n_pass), "1", str(n_mile), str(earnings)])
             print(key + "\t" + val)
         
         elif (end.hour == start.hour + 1) or (start.hour == 23 and end.hour == 0):
@@ -42,11 +42,11 @@ if __name__ == 'main':
             start_earnings = (mid - start).total_seconds() * earnings / (end - start).total_seconds()
             
             key = ",".join([str(start.hour), datetime.strftime(start, date_fmt), driver])
-            val = ",".join([datetime.strftime(start, dtime_fmt), datetime.strftime(mid, dtime_fmt), n_pass, 1, start_mile, start_earnings])
+            val = ",".join([datetime.strftime(start, dtime_fmt), datetime.strftime(mid, dtime_fmt), str(n_pass), "1", str(start_mile), str(start_earnings)])
             print(key + "\t" + val)
             
             key = ",".join([str(end.hour), datetime.strftime(end, date_fmt), driver])
-            val = ",".join([datetime.strftime(mid, dtime_fmt), datetime.strftime(end, dtime_fmt), 0, 0, n_mile - start_mile, earnings - start_earnings])
+            val = ",".join([datetime.strftime(mid, dtime_fmt), datetime.strftime(end, dtime_fmt), "0", "0", str(n_mile - start_mile), str(earnings - start_earnings)])
             print(key + "\t" + val)
         
         elif (end.hour == start.hour + 2) or (start.hour == 22 and end.hour == 0) or (start.hour == 23 and end.hour == 1):
@@ -61,13 +61,17 @@ if __name__ == 'main':
             mid_earnings = 3600 * earnings / (end - start).total_seconds()
             
             key = ",".join([str(start.hour), datetime.strftime(start, date_fmt), driver])
-            val = ",".join([datetime.strftime(start, dtime_fmt), datetime.strftime(mid1, dtime_fmt), n_pass, 1, start_mile, start_earnings])
+            val = ",".join([datetime.strftime(start, dtime_fmt), datetime.strftime(mid1, dtime_fmt), str(n_pass), "1", str(start_mile), str(start_earnings)])
             print(key + "\t" + val)
             
             key = ",".join([str(mid2.hour), datetime.strftime(mid2, date_fmt), driver])
-            val = ",".join([datetime.strftime(mid1, dtime_fmt), datetime.strftime(mid2, dtime_fmt), 0, 0, mid_mile, mid_earnings])
+            val = ",".join([datetime.strftime(mid1, dtime_fmt), datetime.strftime(mid2, dtime_fmt), "0", "0", str(mid_mile), str(mid_earnings)])
             print(key + "\t" + val)
             
             key = ",".join([str(end.hour), datetime.strftime(end, date_fmt), driver])
-            val = ",".join([datetime.strftime(mid2, dtime_fmt), datetime.strftime(end, dtime_fmt), 0, 0, n_mile - (start_mile + mid_mile), earnings - (start_earnings + mid_earnings)])
+            val = ",".join([datetime.strftime(mid2, dtime_fmt), datetime.strftime(end, dtime_fmt), "0", "0", str(n_mile - (start_mile + mid_mile)), str(earnings - (start_earnings + mid_earnings))])
             print(key + "\t" + val)
+
+
+if __name__ == "__main__":
+    main()
