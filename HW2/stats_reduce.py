@@ -27,16 +27,17 @@ def read_map():
 
 def compute_onduty(times, min_minutes=30):
     t_onduty = 0
-    prev_end = None
+    start = datetime.strptime(times[0][0], dtime_fmt)
+    prev_end = datetime(start.year, start.month, start.day, start.hour, 0, 0)
     times.sort(key=lambda x : datetime.strptime(x[0], dtime_fmt))
     
     for time in times:
-        t_onduty += (time[1] - time[0]).total_seconds()
-        if prev_end == None:
-            t_onduty += (time[0] - prev_end).total_seconds()
-        elif (time[0] - prev_end).total_seconds() <= min_minutes * 60:
-            t_onduty += (time[0] - prev_end).total_seconds()
-        prev_end = time[1]
+        start = datetime.strptime(time[0], dtime_fmt)
+        end = datetime.strptime(time[1], dtime_fmt)
+        t_onduty += (end - start).total_seconds()
+        if (start - prev_end).total_seconds() <= min_minutes * 60:
+            t_onduty += (start - prev_end).total_seconds()
+        prev_end = end
         
     return t_onduty / 3600
 
