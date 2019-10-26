@@ -15,22 +15,22 @@ from datetime import datetime
 
 # Define the indexes for each column in both the trip and fare data
 # in order to make the code more flexible
+
 # Trip data column index
-TRIPTIME      = 60
-PICKUP_TIME = 5
-DROPOFF_TIME = 6
-TRIPTIME  = 8
-TRIP_DIST = 9
-PICK_LONG = 10
-PICK_LATT = 11
-DROP_LONG = 12
-DROP_LATT = 13
+trip_index = {'pickup' : 5,
+              'dropoff' : 6,
+              'time' : 8,
+              'dist' : 9,
+              'pickup_long' : 10,
+              'pickup_latt': 11,
+              'dropoff_long': 12,
+              'dropoff_latt': 13}
 
-# Fare data columns
-PAYMENT         = 5
-TOTAL_AMOUNT = 10
+# Fare data column index
+fare_index = {'payment': 5,
+              'total': 10}
 
-FORMAT = "%Y-%m-%d %H:%M:%S"
+dtime_fmt = "%Y-%m-%d %H:%M:%S"
 
 def read_mapper_output(lines, separator = '\t'):
     for line in lines:
@@ -55,8 +55,8 @@ def main():
                 trip = ride_params
                 # We create a datetime object, and in case of fail, get rid of the line
                 try:
-                    dropoff_time = datetime.strptime(trip[DROPOFF_TIME], FORMAT)
-                    pickup_time = datetime.strptime(trip[PICKUP_TIME], FORMAT)
+                    dropoff_time = datetime.strptime(trip[trip_index['dropoff']], dtime_fmt)
+                    pickup_time = datetime.strptime(trip[trip_index['pickup']], dtime_fmt)
                 except:
                     trip = []
             elif len(ride_params) == 11:
@@ -81,14 +81,14 @@ def main():
             # filter out obvious errors: trips too short or long, bad GPS data,
             # no fare, trips over 2 hours (7200 sec) or under 10 seconds
             # Similar filters as [1]
-            elif float(trip[TRIP_DIST]) <= 0.001 \
-            or float(trip[TRIP_DIST]) >= 50 \
-            or float(trip[PICK_LATT]) == 0 \
-            or float(trip[PICK_LONG]) == 0 \
-            or float(trip[DROP_LATT]) == 0 \
-            or float(trip[DROP_LONG]) == 0 \
-            or float(fare[PAYMENT] == 0) \
-            or float(fare[TOTAL_AMOUNT]) == 0 \
+            elif float(trip[trip_index['dist']]) <= 0.001 \
+            or float(trip[trip_index['dist']]) >= 50 \
+            or float(trip[trip_index['pickup_long']]) == 0 \
+            or float(trip[trip_index['pickup_latt']]) == 0 \
+            or float(trip[trip_index['dropoff_long']]) == 0 \
+            or float(trip[trip_index['dropoff_latt']]) == 0 \
+            or float(fare[fare_index['payment']] == 0) \
+            or float(fare[fare_index['total']]) == 0 \
             or (dropoff_time - pickup_time).total_seconds() >= 7200 \
             or (dropoff_time - pickup_time).total_seconds() < 10:
                 pass
@@ -96,7 +96,6 @@ def main():
             else:
                 print("\t".join(trip + fare[4:]))
         except:
-            #print("ERRRRRRRRRRRROOOOOOOOOOORRRRRRRRRRRR!")
             pass # get rid of the data
 
 
