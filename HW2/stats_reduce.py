@@ -26,6 +26,13 @@ def read_map():
 
 
 def compute_onduty(times, min_break=30):
+    """
+    given a driver's trips during an hour, as well as a min_break input value 
+    (in minutes), driver is assumed to be on break if:
+        - they spend more than min_break minutes between two trips
+        - they start his first trip more than min_break / 2 minutes after the hour begins
+        - they end their last trip more than min_break / 2 minutes before the hour ends
+    """
     t_onduty = 0
     times.sort(key=lambda x : datetime.strptime(x[0], dtime_fmt))
     

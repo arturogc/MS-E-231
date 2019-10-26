@@ -36,6 +36,8 @@ def main():
             print(key + "\t" + val)
         
         elif (end.hour == start.hour + 1) or (start.hour == 23 and end.hour == 0):
+            # trip spans over two hours - need to break it in two lines
+            
             mid = datetime(start.year, start.month, start.day, start.hour, 59, 59)
             start_mile = (mid - start).total_seconds() * n_mile / (end - start).total_seconds()
             start_earnings = (mid - start).total_seconds() * earnings / (end - start).total_seconds()
@@ -49,6 +51,8 @@ def main():
             print(key + "\t" + val)
         
         elif (end.hour == start.hour + 2) or (start.hour == 22 and end.hour == 0) or (start.hour == 23 and end.hour == 1):
+            # trip spans over three hours - need to break it in three lines
+            
             mid1 = datetime(start.year, start.month, start.day, start.hour, 59, 59)
             if start.hour == 23:
                 mid2 = datetime(start.year, start.month, start.day, 0, 59, 59)
@@ -70,6 +74,10 @@ def main():
             key = ",".join([datetime.strftime(end, date_fmt), str(end.hour), driver])
             val = ",".join([datetime.strftime(mid2, dtime_fmt), datetime.strftime(end, dtime_fmt), "0", "0", str(n_mile - (start_mile + mid_mile)), str(earnings - (start_earnings + mid_earnings))])
             print(key + "\t" + val)
+        
+        else:
+            # trip spans on more than three hours - assume it's erroneous data
+            pass
 
 
 if __name__ == "__main__":
