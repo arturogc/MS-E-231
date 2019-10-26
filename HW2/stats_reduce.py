@@ -25,21 +25,34 @@ def read_map():
         yield line.rstrip().split('\t')
 
 
-def compute_onduty(times, min_minutes=30):
+def compute_onduty(times, min_break=30):
     t_onduty = 0
-    start = datetime.strptime(times[0][0], dtime_fmt)
-    prev_end = datetime(start.year, start.month, start.day, start.hour, 0, 0)
     times.sort(key=lambda x : datetime.strptime(x[0], dtime_fmt))
     
-    for time in times:
-        start = datetime.strptime(time[0], dtime_fmt)
-        end = datetime.strptime(time[1], dtime_fmt)
-        t_onduty += (end - start).total_seconds()
-        if (start - prev_end).total_seconds() <= min_minutes * 60:
-            t_onduty += (start - prev_end).total_seconds()
-        prev_end = end
+    time = times[0]
+    start_time = datetime.strptime(time[0], dtime_fmt)
+    end_time = datetime.strptime(time[1], dtime_fmt)
+    
+    start_hour = datetime(start_time.year, start_time.month, start_time.day, start_time.hour, 0, 0)
+    end_hour = datetime(start_time.year, start_time.month, start_time.day, start_time.hour, 59, 59)
+    
+    if (start_time - start_hour).total_seconds() <= min_break * 60 / 2:
+        t_onduty += (start_time - start_hour).total_seconds()
+    t_onduty += (end_time - start_time).total_seconds()
+    prev_time = end_time
+    
+    for time in times[1:]:
+        start_time = datetime.strptime(time[0], dtime_fmt)
+        end_time = datetime.strptime(time[1], dtime_fmt)
+        if (start_time - prev_time).total_seconds() <= min_break * 60:
+            t_onduty += (start_time - prev_time).total_seconds()
+        t_onduty += (end_time - start_time).total_seconds()
+        prev_time = end_time
+    
+    if (end_hour - prev_time).total_seconds() <= min_break * 60 / 2:
+        t_onduty += (end_hour - prev_time).total_seconds()
         
-    return t_onduty / 3600
+    return t_onduty / 3599
 
 
 def compute_occupied(times):
@@ -48,7 +61,7 @@ def compute_occupied(times):
     for start, end in times:
         start = datetime.strptime(start, dtime_fmt)
         end = datetime.strptime(end, dtime_fmt)
-        t_occupied += (end - start).total_seconds() / 3600
+        t_occupied += (end - start).total_seconds() / 3599
     
     return t_occupied
 
