@@ -16,7 +16,7 @@ def main():
 	for line in sys.stdin:
 		params = line.strip().split('\t')
 		key = ",".join([params[0], params[1]])
-		val = ",".join(params[2:])
+		val = ",".join(params[3:])
 		print(key + "\t" + val)
 
 

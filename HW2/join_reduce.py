@@ -78,19 +78,17 @@ def main():
             if trip == [] or fare == [] or trip[0] == "medallion":
                 pass
 
-            # filter out obvious errors: trips too short or long, bad GPS data,
-            # no fare, trips over 2 hours (7200 sec) or under 10 seconds
-            # Similar filters as [1]
-            elif float(trip[trip_index['dist']]) <= 0.001 \
-            or float(trip[trip_index['dist']]) >= 50 \
+            # filter out obvious errors: thresholds based on intuition and Google Maps
+            elif float(trip[trip_index['dist']]) <= 0.05 \
+            or float(trip[trip_index['dist']]) >= 70 \
             or float(trip[trip_index['pickup_long']]) == 0 \
             or float(trip[trip_index['pickup_latt']]) == 0 \
             or float(trip[trip_index['dropoff_long']]) == 0 \
             or float(trip[trip_index['dropoff_latt']]) == 0 \
             or float(fare[fare_index['payment']] == 0) \
             or float(fare[fare_index['total']]) == 0 \
-            or (dropoff_time - pickup_time).total_seconds() >= 7200 \
-            or (dropoff_time - pickup_time).total_seconds() < 10:
+            or (dropoff_time - pickup_time).total_seconds() >= 14400 \
+            or (dropoff_time - pickup_time).total_seconds() < 15:
                 pass
 
             else:
