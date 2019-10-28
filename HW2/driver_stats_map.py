@@ -58,7 +58,8 @@ def main():
             
             mid1 = datetime(start.year, start.month, start.day, start.hour, 59, 59)
             if start.hour == 23:
-                mid2 = datetime(start.year, start.month, start.day + 1, 0, 59, 59)
+                mid2 = datetime(start.year, start.month, start.day, 0, 59, 59)
+                mid2 = mid2 + timedelta(days=1)
             else:
                 mid2 = datetime(start.year, start.month, start.day, start.hour + 1, 59, 59)
             start_mile = (mid1 - start).total_seconds() * n_mile / (end - start).total_seconds()
